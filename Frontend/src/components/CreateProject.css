@@ -1,0 +1,128 @@
+/* Container for the Create Project form */
+.create-project-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  background-color: #f8f9fa;
+  padding: 20px;
+}
+
+/* Card for the Create Project form */
+.create-project-card {
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  padding: 1.5rem;
+  width: 100%;
+  max-width: 500px;
+}
+
+/* Title for the Create Project form */
+.create-project-title {
+  font-family: 'Georgia, serif';
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Form group label styling */
+.form-group label {
+  font-weight: 500;
+}
+
+/* Form control styling */
+.form-control {
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+/* Assessment types container styling */
+.assessment-types {
+  margin-bottom: 15px;
+}
+
+/* Styling for form-check labels */
+.form-check-label {
+  font-family: 'Times New Roman, serif';
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+}
+
+/* Styling for checkboxes */
+.form-check-input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.form-check-label::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1rem;
+  height: 1rem;
+  border: 1px solid #343a40; /* Black border */
+  border-radius: 0.25rem;
+  background-color: #fff;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.form-check-input:checked ~ .form-check-label::before {
+  background-color: #343a40; /* Black color for checked state */
+  border-color: #343a40;
+}
+
+.form-check-input:checked ~ .form-check-label::after {
+  content: '';
+  position: absolute;
+  left: 0.25rem;
+  top: 0.25rem;
+  width: 0.5rem;
+  height: 0.5rem;
+  border: solid white;
+  border-width: 0 0.15rem 0.15rem 0;
+  transform: rotate(45deg);
+  background-color: transparent;
+}
+
+/* Button styling for dark buttons */
+.btn-dark {
+  background-color: #343a40;
+  border-color: #343a40;
+  
+}
+
+
+.btn-dark:hover {
+  background-color: #23272b;
+}
+
+/* Button styling for secondary buttons */
+.btn-secondary {
+  font-weight: bold;
+  padding: 10px 15px;
+  width: 100%;
+  border-radius: 5px;
+}
+
+/* Alert styling */
+.alert {
+  margin-top: 10px;
+}
+
+.alert-danger {
+  color: #721c24;
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+}
+
+
+/* Styling for project labels on hover */
+.project-label:hover {
+  background-color: #000; /* Black background color */
+  color: #fff; /* White text color */
+}

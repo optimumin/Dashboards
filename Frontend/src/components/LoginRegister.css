@@ -1,0 +1,63 @@
+.login-register-container {
+    height: 100vh;
+  background: linear-gradient(to right, black, grey);
+    color: white;
+  }
+  
+  .card {
+    border-radius: 10px;
+  }
+  
+  .card-title {
+    color: #333;
+    font-weight: 700;
+  }
+  
+  .form-label {
+    font-weight: 500;
+  }
+  
+  .btn-link {
+    color: #8f9091;
+  }
+  
+  .btn-link:hover {
+    color: #0d0d0e;
+  }
+  
+  .continue-p{
+    font-size: 12px;
+      color: #b2b2b2;
+      font-weight: 600;
+      margin-top: 1rem;
+      text-align: center;
+  }
+
+  .logo-button {
+    border: 1px solid rgba(0, 0, 0, 0.8); /* Light black border */
+    padding: 10px; /* Add padding to make the logos more prominent */
+    cursor: pointer;
+    width: 60px; /* Increase the width for a larger logo */
+    height: 60px; /* Increase the height for a larger logo */
+    border-radius: 0; /* Square border */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s ease; /* Smooth transition for the background color change */
+
+}
+
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 30px; /* Increase the space between the logos */
+}
+
+.logo-button:hover {
+  background-color: lightgrey; /* Change background color to light grey on hover */
+}
+
+ 
+ 

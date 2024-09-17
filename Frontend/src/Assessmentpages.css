@@ -1,0 +1,8 @@
+.small-font {
+  font-size: 0.875rem; /* or any other size you prefer */
+}
+
+.form-label, .form-select, .form-control {
+  font-size: 0.875rem; /* Adjusts the font size for form elements */
+}
+

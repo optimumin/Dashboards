@@ -1,0 +1,65 @@
+.project-table-container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f5f7fa, #e2e6ea); /* Subtle gradient background */
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.project-table-title {
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    text-align: center;
+    color: #343a40;
+}
+
+.project-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 1.5rem;
+}
+
+.project-table th, .project-table td {
+    padding: 0.75rem;
+    text-align: left;
+    border-bottom: 1px solid #dee2e6;
+}
+
+.project-table th {
+    background-color: #343a40;
+    color: #fff;
+    font-weight: 600;
+}
+
+.project-table tr:nth-child(even) {
+    background-color: #f8f9fa; /* Light background for alternate rows */
+}
+
+.project-table tr:hover {
+    background-color: #e9ecef; /* Highlight row on hover */
+}
+
+.create-project-btn-container {
+    text-align: right;
+    margin-top: 1rem;
+}
+
+.create-project-btn {
+    background-color: #343a40;
+    border-color: #343a40;
+    color: #fff;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border-radius: 0.375rem;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.create-project-btn:hover {
+    background-color: #23272b;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+}
