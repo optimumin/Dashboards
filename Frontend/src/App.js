@@ -5,6 +5,9 @@ import CreateProject from './components/CreateProject';
 import Dashboard from './components/Dashboard';  // Adjust the path as needed
 import AssessmentPage from './components/AssessmentPages';  // Adjust the path as needed
 import ProjectTable from './components/ProjectTable';
+import ReviewPage from './components/ReviewPage';
+import ReviewAssessmentPage from './components/ReviewAssessmentpage';
+import EditAssessmentPage from './components/EditAssessmentPage';
 import { ToastContainer } from 'react-toastify';  // Import ToastContainer
 
 const App = () => {
@@ -17,6 +20,10 @@ const App = () => {
           <Route path="/Project" element={<CreateProject/>} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/assessments/:assessment_name" element={<AssessmentPage />} />
+          <Route path="/reviewPage/project/:userId" element={<ReviewPage/>} />
+          <Route path="/review-assessment/:assessment_name" element={<ReviewAssessmentPage/>} />
+          <Route path="/edit-assessment/:assessment_name" element={<EditAssessmentPage />} />
+
         </Routes>
         <ToastContainer />  {/* Add ToastContainer to your app */}
       </div>

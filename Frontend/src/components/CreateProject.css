@@ -126,3 +126,9 @@
   background-color: #000; /* Black background color */
   color: #fff; /* White text color */
 }
+
+.url {
+  color: blue;
+  text-decoration: underline;
+  cursor: pointer;
+}

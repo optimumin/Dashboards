@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './LoginRegister.css';
 import SignInWithGoogle from './SignInWithGoogle';
@@ -13,6 +13,17 @@ const LoginRegister = () => {
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Check if user is already logged in from session storage
+    const storedToken = sessionStorage.getItem('token');
+    const storedUsername = sessionStorage.getItem('username');
+    
+    if (storedToken) {
+      setLoggedIn(true);
+      setUsername(storedUsername || '');
+    }
+  }, []);
 
   const validatePassword = (password) => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -38,7 +49,9 @@ const LoginRegister = () => {
         const data = await response.json();
 
         if (response.ok) {
-          localStorage.setItem('token', data.access_token);
+          sessionStorage.setItem('token', data.access_token);
+          sessionStorage.setItem('userId', data.id); // Store the user ID
+          sessionStorage.setItem('username', username);
           setLoggedIn(true);
           setError('');
           alert('Login successful!');
@@ -94,7 +107,12 @@ const LoginRegister = () => {
     }
   };
 
- 
+  const handleLogout = () => {
+    sessionStorage.clear(); // Clear session storage
+    setLoggedIn(false);
+    setUsername('');
+    navigate('/'); // Navigate to the home page or login page
+  };
 
   return (
       <div className="login-register-container d-flex align-items-center justify-content-center">
@@ -181,7 +199,7 @@ const LoginRegister = () => {
             ) : (
               <div className="text-center">
                 <h2>Welcome, {username}!</h2>
-                <button onClick={() => setLoggedIn(false)} className="btn btn-primary mt-3">Logout</button>
+                <button onClick={handleLogout} className="btn btn-primary mt-3">Logout</button>
               </div>
             )}
           </div>

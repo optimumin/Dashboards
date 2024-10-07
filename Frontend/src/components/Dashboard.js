@@ -1,8 +1,52 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import Navbar from './Navbar';
 import '../Dashboard.css';
 
 const Dashboard = () => {
+  const [chosenAssessments, setChosenAssessments] = useState([]);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
+ // const projectId = sessionStorage.getItem('projectId'); // Get the project ID from session storage
+ const userId = sessionStorage.getItem('userId'); // Assuming userId is also stored
+
+  useEffect(() => {
+    const username = sessionStorage.getItem('username');
+    if (!username) {
+      navigate('/login'); // Redirect to login if not authenticated
+    }
+
+    if (!userId) {
+      setError('ProjectID is missing. Please log in again.');
+      return; // Stop further execution if no projectId
+    }
+
+    // Fetch assessments for the project if projectId is available
+    fetchAssessmentsForProject(userId);
+  }, [navigate, userId]);
+
+  // Function to fetch assessments for a specific project
+  const fetchAssessmentsForProject = async (userId) => {
+    try {
+      const token = sessionStorage.getItem('authToken');
+      const response = await fetch(`http://localhost:5000/projects/${userId}/assessments`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch assessments for the project');
+      }
+
+      const data = await response.json();
+      setChosenAssessments(data); // Set the assessments related to the project
+    } catch (error) {
+      setError('Failed to fetch assessments. Please try again later.');
+      console.error(error);
+    }
+  };
+
   // Updated assessment scores data
   const assessmentScores = [
     { id: 1, label: 'Physical Security', score: 85 },
@@ -27,7 +71,35 @@ const Dashboard = () => {
 
   return (
     <div>
+      <Navbar />
       <h2 className="col-md-8 offset-md-2 mb-4">Dashboard</h2>
+      {/* Display error if it exists */}
+      {error && <div className="alert alert-danger">{error}</div>}
+
+      <div className="row">
+        <div className="col-md-8 offset-md-2">
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title chosen-assessments-heading">Chosen Assessments</h5>
+              <div className="chosen-assessments-border">
+              <ul className="list-group">
+      {chosenAssessments.length > 0 ? (
+        chosenAssessments.map(({ assessment_id, assessment_name }) => (
+          <li key={assessment_id} className="list-group-item d-flex justify-content-between align-items-center">
+            {assessment_name}
+            <Link to={`/assessments/${assessment_name}`} className="btn btn-outline-dark btn-sm">View</Link>
+          </li>
+        ))
+      ) : (
+        <li className="list-group-item text-center">No assessments available for this project</li>
+      )}
+    </ul>
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Assessment Scores Section */}
       <div className="row">
@@ -55,52 +127,28 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Chosen Assessments Section */}
+      {/* All Assessments Section */}
       <div className="row">
         <div className="col-md-8 offset-md-2">
           <div className="card">
             <div className="card-body">
-              <h5 className="card-title chosen-assessments-heading">Chosen Assessments</h5>
+              <h5 className="card-title chosen-assessments-heading">All Assessments</h5>
               <div className="chosen-assessments-border">
                 <ul className="list-group">
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    Physical Security
-                    <Link to="/assessments/Physical Security" className="btn btn-outline-dark btn-sm btn-hover-effect">View</Link>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    Environmental Controls
-                    <Link to="/assessments/Environmental Controls" className="btn btn-outline-dark btn-sm btn-hover-effect">View</Link>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    Power Infrastructure
-                    <Link to="/assessments/Power Infrastructure" className="btn btn-outline-dark btn-sm btn-hover-effect">View</Link>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    Networking Infrastructure
-                    <Link to="/assessments/Networking Infrastructure" className="btn btn-outline-dark btn-sm btn-hover-effect">View</Link>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    Server And Hardware
-                    <Link to="/assessments/Server and Hardware" className="btn btn-outline-dark btn-sm btn-hover-effect">View</Link>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    Data Backup And Recovery
-                    <Link to="/assessments/Data Backup and Recovery" className="btn btn-outline-dark btn-sm btn-hover-effect">View</Link>
-                  </li>
-                  <li className="list-group-item d-flex justify-content-between align-items-center">
-                    Monitoring And Management
-                    <Link to="/assessments/Monitoring and Management" className="btn btn-outline-dark btn-sm btn-hover-effect">View</Link>
-                  </li>
+                  {assessmentScores.map(score => (
+                    <li key={score.id} className="list-group-item d-flex justify-content-between align-items-center">
+                      {score.label}
+                      <Link to={`/assessments/${score.label}`} className="btn btn-outline-dark btn-sm btn-hover-effect">View</Link>
+                    </li>
+                  ))}
                 </ul>
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   );
-  
 };
 
 export default Dashboard;

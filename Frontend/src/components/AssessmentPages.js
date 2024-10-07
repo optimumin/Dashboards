@@ -37,40 +37,50 @@ const AssessmentPage = () => {
       ...prevResponses,
       [qIndex]: {
         ...prevResponses[qIndex],
+        [questionId]: {
+          ...prevResponses[qIndex]?.[questionId], // Maintain existing question responses
         [type]: type === 'file' ? value : value,
         question_id: questionId,
-      },
+      },},
     }));
   };
+  console.log(responses); // Check what responses are being submitted
 
   const validateForm = () => {
     const errors = {};
     let isValid = true;
-
+  
     assessmentData.Sections?.forEach((section) => {
       section.Questions.forEach((question, qIndex) => {
-        if (!responses[qIndex]?.option) {
+        if (!responses[qIndex]?.[question.question_id]?.option) {
           errors[qIndex] = { ...errors[qIndex], option: 'Option is required' };
           isValid = false;
         }
-        if (!responses[qIndex]?.file) {
+        if (!responses[qIndex]?.[question.question_id]?.file) {
           errors[qIndex] = { ...errors[qIndex], file: 'File is required' };
           isValid = false;
         }
-        if (!responses[qIndex]?.comment) {
+        if (!responses[qIndex]?.[question.question_id]?.comment) {
           errors[qIndex] = { ...errors[qIndex], comment: 'Comment is required' };
           isValid = false;
         }
       });
     });
-
+  
     setFormErrors(errors);
     return isValid;
   };
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const userId = sessionStorage.getItem('userId');  // Retrieve userId from sessionStorage
+     console.log('User ID:', userId); // This should log the ID or null/undefined if not set
 
+    if (!userId) {
+      alert('User not logged in.');
+      return;
+    }
     if (!validateForm()) {
       return;
     }
@@ -78,15 +88,22 @@ const AssessmentPage = () => {
     setIsLoading(true);
 
     const formData = new FormData();
+    //formData.append('userId', userId);  // Append userId to form data
+
     Object.keys(responses).forEach((qIndex) => {
-      const response = responses[qIndex];
-      formData.append(`responses[${qIndex}][question_id]`, response.question_id || '');
-      formData.append(`responses[${qIndex}][option_id]`, response.option || '');
-      formData.append(`responses[${qIndex}][response_comment]`, response.comment || '');
-      if (response.file) {
-        formData.append(`responses[${qIndex}][response_file]`, response.file);
-      }
+      const questionResponses = responses[qIndex];
+      Object.keys(questionResponses).forEach((questionId) => {
+        const response = questionResponses[questionId];
+        formData.append(`responses[${questionId}][user_id]`, userId);
+        formData.append(`responses[${questionId}][question_id]`, questionId);
+        formData.append(`responses[${questionId}][option_id]`, response.option || '');
+        formData.append(`responses[${questionId}][response_comment]`, response.comment || '');
+        if (response.file) {
+          formData.append(`responses[${questionId}][response_file]`, response.file);
+        }
+      });
     });
+    
 
     try {
       const response = await fetch('http://localhost:5000/api/responses', {
@@ -108,6 +125,8 @@ const AssessmentPage = () => {
     }
   };
 
+ 
+  
   if (loading) return <div>Loading assessment data...</div>;
   if (error) return <div>Error: {error}</div>;
 

@@ -1,0 +1,568 @@
+//17/07/24 -->last updated 	
+//Task complete -->App.js,App.css,LoginRegister,ProjectTable,CreateProject,Dashboard,AssessmentPages
+//App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import LoginRegister from './components/LoginRegister';
+import CreateProject from './components/CreateProject';
+import Dashboard from './components/Dashboard';  // Adjust the path as needed
+import AssessmentPage from './components/AssessmentPages';  // Adjust the path as needed
+import ProjectTable from './components/ProjectTable';
+const App = () => {
+  return (
+    <Router>
+      <div className="App">
+        <Routes>
+          <Route path="/Login" element={<LoginRegister/>} />
+          <Route path="/projectTable" element={<ProjectTable/>} />
+          <Route path="/Project" element={<CreateProject/>} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/assessment/:type" element={<AssessmentPage />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+};
+
+export default App;
+//app.css
+.App {
+  font-family: 'Times New Roman', serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+
+.login, .create-project {
+  font-family:  'Times New Roman', serif;
+  border: 1px solid #ccc;
+  padding: 20px;
+  margin: 20px;
+  width: 300px;
+  border-radius: 8px;
+}
+
+input, textarea, select {
+  display: block;
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  width: 100%;
+  padding: 10px;
+  background-color: blue;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: darkblue;
+}
+
+
+//LoginRegister:
+import React, { useState } from 'react';
+
+const LoginRegister = () => {
+  const [loggedIn, setLoggedIn] = useState(false);
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [registering, setRegistering] = useState(false); // State to track registration mode
+  const [registrationUsername, setRegistrationUsername] = useState('');
+  const [registrationPassword, setRegistrationPassword] = useState('');
+  const [error, setError] = useState('');
+
+  const handleLoginSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (username && password) {
+        // Simulate login success, ideally validate with backend here
+        // Replace with actual login API call
+        setLoggedIn(true);
+        setError('');
+      } else {
+        setError('Please enter username and password.');
+      }
+    } catch (error) {
+      setError('Failed to log in. Please try again.');
+    }
+  };
+
+  const handleRegistrationSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (registrationUsername && registrationPassword) {
+        // Handle registration logic (e.g., API call)
+        // Replace with actual registration API call
+        console.log({ registrationUsername, registrationPassword });
+        setRegistrationUsername('');
+        setRegistrationPassword('');
+        setError('');
+        setRegistering(false); // Switch back to login view after successful registration
+      } else {
+        setError('Please enter username and password.');
+      }
+    } catch (error) {
+      setError('Failed to register. Please try again.');
+    }
+  };
+
+  return (
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-body">
+              {!loggedIn && !registering ? (
+                <>
+                  <h2 className="card-title text-center mb-4">Login</h2>
+                  <form onSubmit={handleLoginSubmit}>
+                    <div className="mb-3">
+                      <label htmlFor="username" className="form-label">Username</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="username"
+                        placeholder="Username"
+                        value={username}
+                        onChange={(e) => setUsername(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="password" className="form-label">Password</label>
+                      <input
+                        type="password"
+                        className="form-control"
+                        id="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                      />
+                    </div>
+                    {error && <div className="alert alert-danger" role="alert">{error}</div>}
+                    <button type="submit" className="btn btn-primary w-100">Login</button>
+                    <p className="mt-3 text-center">Don't have an account? <button className="btn btn-link p-0" onClick={() => setRegistering(true)}>Register</button></p>
+                  </form>
+                </>
+              ) : !loggedIn && registering ? (
+                <>
+                  <h2 className="card-title text-center mb-4">Register</h2>
+                  <form onSubmit={handleRegistrationSubmit}>
+                    <div className="mb-3">
+                      <label htmlFor="registrationUsername" className="form-label">Username</label>
+                      <input
+                        type="text"
+                        className="form-control"
+                        id="registrationUsername"
+                        placeholder="Username"
+                        value={registrationUsername}
+                        onChange={(e) => setRegistrationUsername(e.target.value)}
+                        required
+                      />
+                    </div>
+                    <div className="mb-3">
+                      <label htmlFor="registrationPassword" className="form-label">Password</label>
+                      <input
+                        type="password"
+                        className="form-control"
+                        id="registrationPassword"
+                        placeholder="Password"
+                        value={registrationPassword}
+                        onChange={(e) => setRegistrationPassword(e.target.value)}
+                        required
+                      />
+                    </div>
+                    {error && <div className="alert alert-danger" role="alert">{error}</div>}
+                    <button type="submit" className="btn btn-primary w-100">Register</button>
+                    <p className="mt-3 text-center">Already have an account? <button className="btn btn-link p-0" onClick={() => setRegistering(false)}>Login</button></p>
+                  </form>
+                </>
+              ) : (
+                <div className="text-center">
+                  <h2>Welcome, {username}!</h2>
+                  <p>You are logged in.</p>
+                  <button className="btn btn-link p-0" onClick={() => setLoggedIn(false)}>Logout</button>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default LoginRegister;
+
+//ProjectTable 
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const ProjectTable = () => {
+
+  const headerStyle = {
+    fontFamily: 'Georgia,serif', // Change the font family here
+    fontSize: '24px',
+    fontWeight: 'bold',
+  };
+
+  const tableContentStyle = {
+    fontFamily: 'Times New Roman, serif', // Change the font family here
+    fontSize: '16px',
+  };
+
+  return (
+
+    <div className="container">
+      <div className="row align-items-center mb-3">
+        <div className="col">
+
+          <h2 style={headerStyle}> List of Projects </h2>
+        </div>
+        <div className="col text-end">
+          <Link to="/Project">
+            <button className="btn btn-primary">Create New Project</button>
+          </Link>
+        </div>
+      </div>
+      <div className="table-responsive">
+        <table className="table table-striped table-bordered" style={tableContentStyle}>
+          <thead className="thead-dark">
+            <tr>
+              <th scope="col">Project Name</th>
+              <th scope="col">Project Description</th>
+              <th scope="col">Assessment Type</th>
+            </tr>
+          </thead>
+          <tbody>
+            {/* Replace with actual data or map through a projects array */}
+            <tr>
+              <td>Online Food Delivery</td>
+              <td>Online delivery web application</td>
+              <td>Security Assessment, AI Integration Assessment</td>
+            </tr>
+            <tr>
+              <td>Student System</td>
+              <td>Student Management systems</td>
+              <td>Data Backup Assessment, Security Assessment</td>
+            </tr>
+            {/* End of data */}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+};
+
+export default ProjectTable;
+//createProject(Formpage):
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+
+const CreateProject = () => {
+  
+  const [projectName, setProjectName] = useState('');
+  const [projectDescription, setProjectDescription] = useState('');
+  const [selectedAssessmentTypes, setSelectedAssessmentTypes] = useState([]);
+  const [error, setError] = useState('');
+
+  const assessmentTypes = [
+    { id: 1, name: 'Security Assessment' },
+    { id: 2, name: 'Data Backup Assessment' },
+    { id: 3, name: 'AI Integration Assessment' },
+  ];
+
+  const handleCheckboxChange = (assessmentType) => {
+    const index = selectedAssessmentTypes.indexOf(assessmentType);
+    if (index === -1) {
+      setSelectedAssessmentTypes([...selectedAssessmentTypes, assessmentType]);
+    } else {
+      setSelectedAssessmentTypes(selectedAssessmentTypes.filter(type => type !== assessmentType));
+    }
+    
+  };
+
+  const handleProjectSubmit = (e) => {
+    e.preventDefault(); // Prevent default form submission behavior
+
+    if (projectName && projectDescription && selectedAssessmentTypes.length > 0) {
+      // Handle project save logic (e.g., API call)
+      console.log({ projectName, projectDescription, selectedAssessmentTypes });
+      // Clear form after submission
+      setProjectName('');
+      setProjectDescription('');
+      setSelectedAssessmentTypes([]);
+      setError('');
+      
+    } else {
+      setError('Please fill out all project details.');
+    }
+
+    
+  };
+
+  return (
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <div className="card">
+            <div className="card-body">
+              <h2 className="card-title text-center mb-4">Create Project</h2>
+              <form onSubmit={handleProjectSubmit}>
+                <div className="mb-3">
+                  <label htmlFor="projectName" className="form-label">Project Name</label>
+                  <input
+                    type="text"
+                    className="form-control"
+                    id="projectName"
+                    placeholder="Project Name"
+                    value={projectName}
+                    onChange={(e) => setProjectName(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="projectDescription" className="form-label">Project Description</label>
+                  <textarea
+                    className="form-control"
+                    id="projectDescription"
+                    placeholder="Project Description"
+                    value={projectDescription}
+                    onChange={(e) => setProjectDescription(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="mb-3">
+                  <label className="form-label">Assessment Types</label><br />
+                  {assessmentTypes.map(type => (
+                    <div key={type.id} className="form-check form-check-inline">
+                      <input
+                        className="form-check-input"
+                        type="checkbox"
+                        id={type.name}
+                        value={type.name}
+                        checked={selectedAssessmentTypes.includes(type.name)}
+                        onChange={() => handleCheckboxChange(type.name)}
+                      />
+                      <label className="form-check-label" htmlFor={type.name}>{type.name}</label>
+                    </div>
+                  ))}
+                </div>
+                {error && <div className="alert alert-danger" role="alert">{error}</div>}
+                <button type="submit" className="btn btn-primary w-100">Save Project</button>
+              </form>
+              <div className="mt-3 text-center">
+                <Link to="/ProjectTable" className="btn btn-secondary">Back to Project Table</Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default CreateProject;
+//Dashboard
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const Dashboard = () => {
+  // Mock assessment scores data
+  const assessmentScores = [
+    { id: 1, label: 'Security Assessment', score: 85 },
+    { id: 2, label: 'Data Backup Assessment', score: 92 },
+    { id: 3, label: 'AI Integration Assessment', score: 50 }
+  ];
+
+  return (
+    <div>
+      <h2 className="text-center mb-4">Dashboard</h2>
+
+      {/* Assessment Scores Section */}
+      <div className="row">
+        <div className="col-md-8 offset-md-2">
+          <div className="card mb-4">
+            <div className="card-body">
+              <h5 className="card-title">Assessment Scores</h5>
+              <div className="bar-chart">
+                {/* Render improved assessment scores visualization */}
+                {assessmentScores.map(score => (
+                  <div key={score.id} className="d-flex align-items-center mb-3">
+                    <div className="w-25">
+                      <span className="bar-label">{score.label}</span>
+                    </div>
+                    <div className="progress w-75">
+                      <div className="progress-bar bg-success" role="progressbar" style={{ width: `${score.score}%` }} aria-valuenow={score.score} aria-valuemin="0" aria-valuemax="100">
+                        {score.score}%
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Chosen Assessments Section */}
+      <div className="row">
+        <div className="col-md-8 offset-md-2">
+          <div className="card">
+            <div className="card-body">
+              <h5 className="card-title">Chosen Assessments</h5>
+              <ul className="list-group">
+                <li className="list-group-item d-flex justify-content-between align-items-center">
+                  Security Assessment
+                  <Link to="/assessment/Security" className="btn btn-outline-primary btn-sm btn-hover-effect">View</Link>
+                </li>
+                <li className="list-group-item d-flex justify-content-between align-items-center">
+                  Data Backup Assessment
+                  <Link to="/assessment/DataBackup" className="btn btn-outline-primary btn-sm btn-hover-effect">View</Link>
+                </li>
+                <li className="list-group-item d-flex justify-content-between align-items-center">
+                  AI Integration Assessment
+                  <Link to="/assessment/AIIntegration" className="btn btn-outline-primary btn-sm btn-hover-effect">View</Link>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  );
+};
+
+export default Dashboard;
+
+//AssessmentPages
+import React from 'react';
+import { useParams } from 'react-router-dom';
+
+const assessmentsData = {
+  Security: [
+    {
+      title: "Security Measures",
+      questions: [
+        "Describe your security measures",
+        "How often do you update your security protocols?"
+      ]
+    },
+    {
+      title: "Incident Response",
+      questions: [
+        "Describe your incident response plan",
+        "How do you handle security breaches?"
+      ]
+    },
+    {
+      title: "Compliance",
+      questions: [
+        "Are you compliant with industry standards?",
+        "Describe your compliance auditing process"
+      ]
+    }
+  ],
+  DataBackup: [
+    {
+      title: "Backup Strategies",
+      questions: [
+        "Describe your backup strategy",
+        "How often do you perform backups?"
+      ]
+    },
+    {
+      title: "Data Recovery",
+      questions: [
+        "Describe your data recovery plan",
+        "How do you ensure data integrity during recovery?"
+      ]
+    },
+    {
+      title: "Storage Solutions",
+      questions: [
+        "What storage solutions do you use?",
+        "How do you ensure storage security?"
+      ]
+    }
+  ],
+  AIIntegration: [
+    {
+      title: "AI Implementation",
+      questions: [
+        "Describe your AI implementation",
+        "How do you integrate AI into existing systems?"
+      ]
+    },
+    {
+      title: "Data Handling",
+      questions: [
+        "How do you handle data for AI?",
+        "Describe your data processing methods"
+      ]
+    },
+    {
+      title: "Ethical Considerations",
+      questions: [
+        "Describe your ethical considerations for AI",
+        "How do you ensure ethical use of AI?"
+      ]
+    }
+  ]
+};
+
+const AssessmentPage = () => {
+  const { type } = useParams();
+  const assessment = assessmentsData[type];
+
+  const handleSubmit = () => {
+    // Handle submission logic here
+    alert('Assessment submitted successfully!');
+  };
+
+  return (
+    <div className="container mt-5">
+      <div className="row justify-content-center">
+        <div className="col-lg-8">
+          <div className="card">
+            <div className="card-body">
+              <h2 className="card-title text-center mb-4">Assessment: {type}</h2>
+              {assessment.map((section, index) => (
+                <div key={index} className="mb-4">
+                  <h3>{section.title}</h3>
+                  {section.questions.map((question, qIndex) => (
+                    <div className="mb-3" key={qIndex}>
+                      <label className="form-label">{question}</label>
+                      <select className="form-select mb-2">
+                        <option>Option 1</option>
+                        <option>Option 2</option>
+                        <option>Option 3</option>
+                      </select>
+                      <textarea className="form-control" rows="3" placeholder="Comments"></textarea>
+                    </div>
+                  ))}
+                </div>
+              ))}
+              <div className="text-center">
+                <button type="button" className="btn btn-primary" onClick={handleSubmit}>Submit Assessment</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default AssessmentPage;
