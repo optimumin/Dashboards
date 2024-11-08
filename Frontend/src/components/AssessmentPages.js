@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Sidebar from './Sidebar';
+import './AssessmentPages.css'
 
 const AssessmentPage = () => {
   const { assessment_name } = useParams();
@@ -131,12 +133,25 @@ const AssessmentPage = () => {
   if (error) return <div>Error: {error}</div>;
 
   return (
-    <div className="container mt-5">
+    <div className="containerss mt-5">
+    <Sidebar/>
+    <header className="head-Assessment">
+                <h6 className="Assessment-title"> Assessment Form</h6>
+                <div class="top-icons">
+                    <button class="icon-button">
+                        <span class="material-icons">inbox</span>
+                    </button>
+                    <button className="icon-button">
+              <span className="material-icons">account_circle</span>
+            </button>
+                </div>
+      </header>
+      <h6 className="assessment">Assessment: {assessmentData['Assessment Name']}</h6>
+
       <div className="row justify-content-center">
         <div className="col-lg-8">
-          <div className="card shadow-sm">
-            <div className="card-body">
-              <h3 className="text-center mb-4">Assessment: {assessmentData['Assessment Name']}</h3>
+          <div className="card-assessment ">
+            <div className="card-body-assessment">
               <form onSubmit={handleSubmit}>
                 {assessmentData.Sections && assessmentData.Sections.map((section, index) => (
                   <div key={index} className="card mb-4">
@@ -187,7 +202,7 @@ const AssessmentPage = () => {
                   </div>
                 ))}
                 <div className="text-center">
-                  <button type="submit" className="btn btn-dark btn-lg" disabled={isLoading}>
+                  <button type="submit" className="btn btn-success btn-lg" disabled={isLoading}>
                     {isLoading ? 'Submitting...' : 'Submit'}
                   </button>
                 </div>

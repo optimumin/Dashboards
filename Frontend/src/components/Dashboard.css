@@ -1,0 +1,249 @@
+/* Set full height for the entire page */
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+/* Overall container */
+.container-fluid {
+  padding: 20px;
+  margin-left: 20px; /* Adds space between sidebar and content */
+  background-color: #f7f9fc; /* Light background for the overall container */
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 100vh; /* Ensures the container takes up the full viewport height */
+
+}
+
+/* Title */
+/* Header.css */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  margin-left:17.7% ;
+  margin-right: 15px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+.top-icons {
+  display: flex;
+  gap: 10px;
+}
+.icon-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #333;
+}
+.icon-button .material-icons {
+  font-size: 24px;
+}
+.create-button, .action-button {
+  background-color: #4a90e2;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 10px;
+}
+.dashboard-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #343a40;
+  text-align: center; /* Center-align the title */
+}
+
+/* Project Card Styling */
+/* Scrollable Project Container */
+.projects {
+  display: flex;
+  justify-content: space-between; /* Spreads cards across the row */
+  gap: 10px; /* Adds space between cards */
+  margin-left: 17.7%;
+  margin-right: 15px; /* Adjusted to match left margin */
+  padding: 10px; /* Added padding */
+  max-height: 400px; /* Set a maximum height for the container */
+  overflow-y: auto;  /* Enable vertical scrolling */
+  border: 1px solid #ddd; /* Optional: Add a border for better visibility */
+  border-radius: 5px; /* Optional: Add border radius for rounded corners */
+}
+
+
+.dashboard-title { 
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 30px;
+  color: #343a40;
+  text-align: center; /* Center-align the title */
+}
+
+/* Scrollable Project Container */
+.projects {
+  display: flex;
+  flex-wrap: wrap; /* Allow cards to wrap into multiple rows */
+  justify-content: flex-start; /* Align cards to the start */
+  margin-left: 17.7%;
+  padding-right: 15px;
+  height: 200px; /* Set a fixed height for the container */
+  overflow-y: auto; /* Show vertical scrollbar only when necessary */
+  border: 0px solid #ffffff; /* Optional: Add a border for better visibility */
+  border-radius: 5px;
+  gap:20px /* Optional: Add border radius for rounded corners */
+}
+
+/* Project Card Styling */
+.project-card {
+  background-color: #ffffff;
+  border-radius: 2px; /* Softer rounded corners */
+  padding: 20px;
+  width: 32%; /* Responsive width */
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Increased shadow for a modern look */
+  transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+.project-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); /* Enhanced shadow on hover */
+}
+
+.project-card h3 {
+  
+  font-size: 1.25rem;
+  margin-bottom: 10px;
+  color: #030303;
+  font-weight: 600;
+}
+
+p {
+  margin: 5px 0; /* Smaller spacing between paragraphs */
+  color: #606060; /* Subtle text color */
+}
+
+/* Progress Bars */
+.progress-bars {
+  background-color: #e9ecef;
+  border-radius: 5px;
+  overflow: hidden;
+  height: 20px;
+  margin-bottom: 10px;
+}
+
+.progres {
+  background-color: #007bff;
+  gap: 40px;
+  height: 100%;
+  line-height: 20px;
+  text-align: center;
+  color: white;
+  font-weight: 600;
+  border-radius: 5px; /* Match progress bar corners */
+}
+
+
+/* Chosen Assessments Section */
+.chosen-assessments-container {
+  margin-top: 1px;
+  margin-bottom: 1px;
+}
+
+.card {
+  background-color: #fff;
+  border: none;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card-title {
+  font-weight: 700;
+  color: #495057;
+}
+
+.list-group-item {
+  border: none;
+  padding: 5px 5px; /* Increased padding for better spacing */
+}
+
+.list-group-item .btn-outline-dark {
+  color: #007bff;
+  border-color: #007bff;
+}
+
+.list-group-item .btn-outline-dark:hover {
+  background-color: #007bff;
+  color: white;
+}
+
+/* Assessment Scores Section */
+.score {
+  padding: 0;
+}
+
+.progress {
+  height: 20px;
+  background-color: #e9ecef;
+  border-radius: 30px;
+  width: 100%;
+  margin: 0;
+}
+
+.progress-bar {
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-align: right;
+  line-height: 20px;
+  height: 100%;
+  color: #fff; /* White text for better contrast */
+}
+
+/* Progress Colors */
+.bg-success {
+  background-color: #28a745 !important;
+}
+
+.bg-warning {
+  background-color: #ffc107 !important;
+}
+
+.bg-danger {
+  background-color: #dc3545 !important;
+}
+
+/* Miscellaneous */
+.alert {
+  margin-top: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .projects {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .project-card {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .dashboard-title {
+    margin-left: 0;
+    text-align: center;
+  }
+}

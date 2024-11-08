@@ -105,6 +105,14 @@ class Response(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)  # Foreign key referencing users table
 
 
+# Define the ReviewerComments model
+class ReviewerComments(db.Model):
+    __tablename__ = 'reviewer_comments'
+    comment_id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, nullable=False)
+    assessment_name = db.Column(db.String(255), nullable=False)
+    question_id = db.Column(db.Integer, nullable=False)
+    reviewer_comment = db.Column(db.Text, nullable=False)
 
 def validate_password(password):
     return re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$', password)
@@ -428,7 +436,7 @@ def submit_assessment():
         print("Error occurred:", str(e))
         return jsonify({"error": str(e)}), 500
 
-
+#ReviewAssessmentpage
 @app.route('/api/get_submitted_assessment_data/<string:assessment_name>/<int:user_id>', methods=['GET'])
 def get_submitted_assessment_data(assessment_name, user_id):
     try:
@@ -547,6 +555,65 @@ def update_responses():
 
 
 
+
+
+
+# API endpoint to handle reviewer comment submission
+@app.route('/api/submit_reviewer_comments', methods=['POST'])
+def submit_reviewer_comments():
+    try:
+        # Get the list of comments from the request
+        data = request.json  # Expecting an array of comment objects
+
+        # Validate input
+        if not data:
+            return jsonify({'error': 'Missing required data'}), 400
+
+        # Save each comment to the database
+        for comment in data:
+            user_id = comment.get('user_id')
+            assessment_name = comment.get('assessment_name')
+            question_id = comment.get('question_id')
+            reviewer_comment = comment.get('reviewer_comment')
+
+            # Validate the individual comment data
+            if not user_id or not assessment_name or not question_id or not reviewer_comment:
+                return jsonify({'error': 'Invalid comment data'}), 400
+
+            # Create a new ReviewerComments object and save to database
+            new_comment = ReviewerComments(
+                user_id=user_id,
+                assessment_name=assessment_name,
+                question_id=question_id,
+                reviewer_comment=reviewer_comment
+            )
+            db.session.add(new_comment)
+
+        # Commit the transaction
+        db.session.commit()
+
+        return jsonify({'message': 'Reviewer comments submitted successfully'}), 201
+
+    except Exception as e:
+        print(f"Error: {e}")  # Log the error for debugging
+        return jsonify({'error': 'An error occurred while submitting comments'}), 500
+    
+@app.route('/projects/<int:user_id>', methods=['GET'])
+def get_user_projects(user_id):
+    try:
+        # Query the database to fetch projects for the given user_id
+        projects = Project.query.filter_by(userid=user_id).all()  # Changed 'user_id' to 'userid'
+
+        if not projects:
+            return jsonify({"message": "No projects found for this user."}), 404
+
+        # Format the response to send project names and IDs to the frontend
+        project_list = [{"project_id": project.id, "project_name": project.name} for project in projects]
+
+        return jsonify(project_list), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

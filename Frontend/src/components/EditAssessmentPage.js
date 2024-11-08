@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';  
 import { useParams, useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Sidebar from './Sidebar';
+import './EditAssessmentPage.css'
 
 const EditAssessmentPage = () => {
   const { assessment_name } = useParams();
@@ -142,11 +144,24 @@ const EditAssessmentPage = () => {
 
   return (
     <div className="container mt-5">
+    <Sidebar/>
+     <header className="head-edit">
+                <h6 className="edit-title">Edit AssessmentForm</h6>
+                <div class="top-icons">
+                    <button class="icon-button">
+                        <span class="material-icons">inbox</span>
+                    </button>
+                    <button className="icon-button">
+              <span className="material-icons">account_circle</span>
+            </button>
+                </div>
+         </header>
+         <h5 className="text-left mb-4">Edit Assessment: {assessmentData['Assessment Name']}</h5>
+
       <div className="row justify-content-center">
         <div className="col-lg-8">
-          <div className="card shadow-sm">
-            <div className="card-body">
-              <h3 className="text-center mb-4">Edit Assessment: {assessmentData['Assessment Name']}</h3>
+          <div className="card-edit ">
+            <div className="card-body-edit">
               <form onSubmit={handleSubmit}>
                 {assessmentData.Sections && assessmentData.Sections.map((section, index) => (
                   <div key={index} className="card mb-4">
@@ -204,7 +219,7 @@ const EditAssessmentPage = () => {
                   </div>
                 ))}
                 <div className="text-center">
-                  <button type="submit" className="btn btn-dark btn-lg" disabled={isLoading}>
+                  <button type="submit" className="btn btn-success btn-lg" disabled={isLoading}>
                     {isLoading ? 'Updating...' : 'Update'}
                   </button>
                 </div>

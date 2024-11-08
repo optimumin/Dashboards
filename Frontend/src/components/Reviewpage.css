@@ -1,0 +1,90 @@
+.container-fluid {
+    padding: 20px;
+  }
+  
+  .headers {
+    margin-top: -10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #dee2e6;
+    margin-left: 17.5%;
+    margin-right: 1.5%;
+  }
+  
+  .project-Review {
+    font-size: 24px;
+    font-weight: bold;
+  }
+  
+  .table-responsive {
+    width: 135%;
+  }
+  
+  .full-width-table {
+    margin-left: 13%;
+    width: 60%;
+    border-collapse: collapse;
+    margin-top: 0px;
+    padding-left: 10%;
+  }
+  
+  .table-head {
+    background-color: #d3dee9;
+    color: white;
+  }
+  
+  .table-body td {
+    vertical-align: middle;
+  }
+  
+  /* Button styles */
+.btn-primarys {
+    background-color: #ffffff;
+    border-color: #1c67d6;
+    color: white;
+    font-size: 14px;
+    padding: 8px 12px;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(4, 58, 236, 0.2);
+    margin-right: 20px;
+  }
+  
+  .btn-primarys:hover {
+    background-color: #e9edf1;
+    border-color: #003366;
+  }
+  .btn {
+    margin-left: 10px;
+  }
+  
+  .top-icons {
+    display: flex;
+  }
+  
+  .icon-button {
+    background-color: transparent;
+    border: none;
+    margin-right: 10px;
+  }
+  
+  .icon-button .material-icons {
+    font-size: 24px;
+  }
+  
+  /* Alerts customization */
+.alert {
+    font-family: 'Arial', sans-serif;
+    font-size: 16px;
+    text-align: center;
+  }
+  
+  .alert-info,
+  .alert-danger,
+  .alert-warning {
+    margin-top: 10px;
+    margin-bottom: 10px;
+  }
+  

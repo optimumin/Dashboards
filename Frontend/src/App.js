@@ -9,6 +9,7 @@ import ReviewPage from './components/ReviewPage';
 import ReviewAssessmentPage from './components/ReviewAssessmentpage';
 import EditAssessmentPage from './components/EditAssessmentPage';
 import { ToastContainer } from 'react-toastify';  // Import ToastContainer
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const App = () => {
   return (

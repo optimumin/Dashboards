@@ -1,10 +1,14 @@
 import React, { useEffect, useState } from 'react'; 
-import { useParams } from 'react-router-dom';
+import { useParams,useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import Sidebar from './Sidebar';
+import './ReviewAssessmentpage.css'
 
 const ReviewAssessmentPage = () => {
   const { assessment_name } = useParams();
   const [submittedResponses, setSubmittedResponses] = useState([]);
+  const [reviewerComments, setReviewerComments] = useState({}); // State to store reviewer comments for all questions
+  const navigate = useNavigate();  // Initialize useNavigate
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -41,6 +45,60 @@ const ReviewAssessmentPage = () => {
     fetchSubmittedResponses();
   }, [assessment_name]);  // Refetch responses when assessment_name changes
 
+
+    // Handle reviewer comment change for each question
+    const handleCommentChange = (questionId, comment) => {
+      setReviewerComments((prevComments) => ({
+        ...prevComments,
+        [questionId]: comment, // Store the comment based on the question ID
+      }));
+    };
+  
+    // Handle submit button for all reviewer comments
+    const handleSubmitAllComments = async () => {
+      const userId = sessionStorage.getItem('userId');
+      if (!userId) {
+        alert("User not logged in.");
+        return;
+      }
+
+      // Collect all comments into an array
+    const commentsToSubmit = Object.entries(reviewerComments).map(([questionId, reviewer_comment]) => ({
+      question_id: questionId,
+      reviewer_comment,
+      assessment_name,  // Include assessment name
+      user_id: userId   // Include user ID
+    }));
+
+    if (commentsToSubmit.length === 0) {
+      alert("Please enter comments before submitting.");
+      return;
+    }
+
+    // API call to submit all the reviewer comments
+    try {
+      const response = await fetch(`http://localhost:5000/api/submit_reviewer_comments`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(commentsToSubmit), // Submit all comments together
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to submit reviewer comments");
+      }
+
+       // Clear reviewer comments after successful submission
+       setReviewerComments({});
+      alert("All reviewer comments submitted successfully!");
+     navigate(`/reviewPage/project/${assessment_name}`);  // Navigate to the review page
+
+    } catch (err) {
+      alert(`Error submitting comments: ${err.message}`);
+    }
+  };
+
   if (loading) {
     return (
       <div className="d-flex justify-content-center align-items-center" style={{ height: '100vh' }}>
@@ -60,15 +118,30 @@ const ReviewAssessmentPage = () => {
   }
 
   return (
+
     <div className="container mt-5">
-      <h3 className="text-center mb-4">Submitted Responses for {assessment_name}</h3>
+       <header className="headerss">
+       <h6 className='AssessmentReview'>Assessment Review</h6>
+        <div className="top-icons">
+          <button className="icon-button">
+            <span className="material-icons">inbox</span>
+          </button>
+          <button className="icon-button">
+            <span className="material-icons">account_circle</span>
+          </button>
+        </div>
+      </header>
+      
+      
+    <Sidebar/>
+      <h5 className="text-left mb-4">Review: {assessment_name}</h5>
       {submittedResponses.length > 0 ? (
         submittedResponses.map((section) => (
-          <div key={section.Section_Name} className="card mb-4"> {/* Unique key for section */}
-            <div className="card-header bg-secondary text-white">
+          <div key={section.Section_Name} className="card-review mb-4"> {/* Unique key for section */}
+            <div className="card-headerss bg-secondary text-white">
               <h4 className="mb-0">{section.Section_Name}</h4>
             </div>
-            <div className="card-body">
+            <div className="card-bodies">
               {section.Questions.map((question) => (
                 <div key={question.question_id} className="mb-4 p-3 border rounded"> {/* Unique key for question */}
                   <div className="fw-bold">Question {question.question_id} : {question.question_text}</div>
@@ -83,6 +156,18 @@ const ReviewAssessmentPage = () => {
                       <strong>File:</strong> {question.response_file_url} 
                     </div>
                   )}
+                    {/* Reviewer Comment Textarea */}
+                    <div className="mt-3">
+                    <label htmlFor={`reviewer-comment-${question.question_id}`}><strong>Reviewer Comments:</strong></label>
+                    <textarea
+                      id={`reviewer-comment-${question.question_id}`}
+                      className="form-control"
+                      rows="3"
+                      value={reviewerComments[question.question_id] || ''}
+                      onChange={(e) => handleCommentChange(question.question_id, e.target.value)}
+                      placeholder="Enter your comment here..."
+                    />
+                  </div>
                 </div>
               ))}
             </div>
@@ -93,6 +178,15 @@ const ReviewAssessmentPage = () => {
           No submitted responses found for this assessment.
         </div>
       )}
+
+      {/* Submit All Comments Button */}
+      <div className="text-center mt-4">
+        <button
+          className="btn btn-primary"
+          onClick={handleSubmitAllComments}
+        >Review
+        </button>
+      </div>
     </div>
   );
 };

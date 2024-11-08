@@ -1,0 +1,42 @@
+/* Sidebar Styles */ 
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #0d1e30;
+  position: fixed;
+  top: 0;
+  left: 0;
+  padding-top: 20px;
+}
+
+.sidebar-title {
+  color: white;
+  text-align: center;
+  font-size: 1.5rem;
+  margin-bottom: 30px;
+}
+
+.sidebar-links {
+  list-style-type: none;
+  padding: 0;
+}
+
+.sidebar-link {
+  display: block;
+  margin-top: -10px;
+  padding: 10px 20px;
+
+  font-size: 1.1rem;
+  color: rgb(255, 255, 255); /* Set inactive link color to blue */
+  text-decoration: none;
+}
+
+.sidebar-link:hover {
+  text-decoration: none;
+  color: rgb(27, 39, 204); /* Optional: Change text color on hover */
+}
+
+.sidebar-link.active {
+  background-color: white; /* Active link background color */
+  color: #4f769c; /* Set active link text color to a contrasting color */
+}
