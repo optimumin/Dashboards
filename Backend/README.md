@@ -1,7 +1,3 @@
-# Sample Flask Project
-
-This is a simple Flask-based backend project. The steps below outline how to set up and run the project locally.
-
 
 ## Prerequisites
 
@@ -19,7 +15,7 @@ Ensure you have the following installed on your system:
 
 2. Navigate to the project directory:
 
-   cd sampleproject/backend
+   cd backend
 
 3. Create a virtual environment (if not already created):
    
@@ -30,7 +26,7 @@ Ensure you have the following installed on your system:
    Windows:
 
     ./venv/scripts/activate
-    
+
    macOS/Linux:
     source venv/bin/activate
 
