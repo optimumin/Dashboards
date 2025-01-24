@@ -6,6 +6,7 @@ import Sidebar from './Sidebar';
 
 const ReviewPage = () => {
   const userId = sessionStorage.getItem('userId');
+  const userRole = sessionStorage.getItem('roleId'); // Role taken from sessionStorage after login
   const [assessments, setAssessments] = useState([]);
   const [error, setError] = useState(null);
 
@@ -73,12 +74,23 @@ const ReviewPage = () => {
                 <td>{userId}</td>
                 <td>{assessment.assessment_name}</td>
                 <td>
-                  <Link to={`/review-assessment/${assessment.assessment_name}`} className="btn btn-primarys">
-                    Review
-                  </Link>
+                {userRole === '1' && (
+                  <>
                   <Link to={`/edit-assessment/${assessment.assessment_name}`} className="btn btn-primarys">
                     Edit
                   </Link>
+                  <Link to={`/reviewer-comments/${assessment.assessment_name}`} className="btn btn-primarys " >
+                     Reviewer Comments
+                  </Link>
+                  </>
+
+                
+            )}
+            {userRole === '2' && (
+                  <Link to={`/review-assessment/${assessment.assessment_name}`} className="btn btn-primarys">
+                    Review
+                  </Link>
+                )}
                 </td>
               </tr>
             ))}

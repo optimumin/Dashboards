@@ -1,0 +1,23 @@
+Storage Engineering: S3
+
+This acts same like Google Drive - Storage and Retrieval
+
+What is S3?
+	Simple storage service, it is designed for unlimited, unstructured manner of storing , processing and retrieval of data.
+	It is a storage on the Internet
+	This can be accessed anywhere and anytime, from anywhere on the web
+	It is a Global service
+It also act as a version control system by having the feature called versioning
+
+
+Benefits:
+Real-time scenario
+Availablity - 99.99%
+Durability - 99.999999% 
+Unlimited storage
+Upto 5TB data can be stored under 1 object
+
+Limittions:
+- except.exe
+- we cannot do any kind of instalations
+- free-tier upto 5GB object I can store in my single account

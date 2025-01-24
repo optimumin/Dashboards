@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
-from flask_jwt_extended import JWTManager, create_access_token, jwt_required
+from flask_jwt_extended import JWTManager, create_access_token, jwt_required,get_jwt_identity
 from flask_cors import CORS
 import re
 from sqlalchemy.orm import joinedload
@@ -28,7 +28,14 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(80), unique=True, nullable=False)
     password = db.Column(db.String(120), nullable=False)
+    role_id = db.Column(db.Integer, db.ForeignKey('roles.role_id'), nullable=False)
+    role = db.relationship('Role', backref='users')
 
+
+class Role(db.Model):
+    __tablename__ = 'roles'
+    role_id = db.Column(db.Integer, primary_key=True)
+    role_name = db.Column(db.String(50), unique=True, nullable=False)
 class GoogleUser(db.Model):
     __tablename__='google_users'
     id = db.Column(db.Integer, primary_key=True)
@@ -129,18 +136,24 @@ def register():
     data = request.get_json()
     username = data.get('username')
     password = data.get('password')
-
+    role_id = data.get('role_id')
+    # Validate username format
     if not validate_username(username):
         return jsonify({"msg": "Username must be between 3 and 20 characters long and contain only letters, numbers, and underscores."}), 400
-
+    # Validate password format
     if not validate_password(password):
         return jsonify({"msg": "Password must be at least 8 characters long and include at least one uppercase letter, one number, and one special character."}), 400
-
+    # Check if the username already exists
     if User.query.filter_by(username=username).first():
         return jsonify({"msg": "Username already exists"}), 400
+    # Validate if role_id exists in the Role table
+    role = Role.query.get(role_id)
+    if not role:
+        return jsonify({"msg": "Invalid role ID"}), 400
 
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-    new_user = User(username=username, password=hashed_password)
+    
+    new_user = User(username=username, password=hashed_password, role_id=role_id)
     db.session.add(new_user)
     db.session.commit()
 
@@ -155,12 +168,27 @@ def login():
     user = User.query.filter_by(username=username).first()
 
     if user and bcrypt.check_password_hash(user.password, password):
-        access_token = create_access_token(identity={'username': user.username})
-        return jsonify(access_token=access_token,id=user.id), 200
-    
+        if user.role_id:
+                print(f"User: {user.username}, Role ID: {user.role_id}")  # Debugging log
 
+        access_token = create_access_token(identity={'username': user.username, 'role_id':user.role_id})
+        return jsonify(access_token=access_token,id=user.id,role_id=user.role_id), 200
+    
     return jsonify({"msg": "Invalid credentials"}), 401
 
+
+
+@app.route('/roles', methods=['GET'])
+def get_roles():
+    try:
+        # Query the database for all roles
+        roles = Role.query.all()
+        # Transform the role objects into a list of dictionaries
+        role_list = [{"role_id": role.role_id, "role_name": role.role_name} for role in roles]
+        return jsonify({"roles": role_list}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
 @app.route('/api/user', methods=['POST'])
 def create_user():
     data = request.json
@@ -256,19 +284,35 @@ def create_project():
         return jsonify({"msg": f"An error occurred: {str(e)}"}), 500
 
 @app.route('/projects', methods=['GET'])
-  # Requires JWT authentication
+@jwt_required()
 def get_projects():
-    projects = Project.query.all()
-    project_list = []
+    current_user = get_jwt_identity()
+    print(f"Current User: {current_user}")  # Debugging: log current user information
+    
+    user = User.query.filter_by(username=current_user['username']).first()
+    if not user:
+        return jsonify({"msg": "User not found"}), 404
+    
+    if user.role_id == 1: 
+                projects = Project.query.filter_by(userid =user.id).all()#   Submitter role
+    elif user.role_id == 2: 
+                projects = Project.query.all() #  Auditor role
+    else:
+        return jsonify({"msg": "Unauthorized"}), 403
 
-    for project in projects:
-        assessments = [pa.assessment.assessment_name for pa in project.assessments]
-        project_list.append({
-            'id': project.id,
-            'name': project.name,
-            'description': project.description,
-            'assessment_name': assessments
-        })
+    if not projects:
+        return jsonify({"msg": "No projects found"}), 404
+
+    # Serialize project data
+    project_list = [
+        {
+            "id": project.id,
+            "name": project.name,
+            "description": project.description,
+            "assessment_name": [a.assessment.assessment_name for a in project.assessments]
+        }
+        for project in projects
+    ]
 
     return jsonify(project_list), 200
 
@@ -365,76 +409,91 @@ if not os.path.exists(UPLOAD_FOLDER):
 @app.route('/api/responses', methods=['POST'])
 def submit_assessment():
     try:
-        print(request.form)  # Log incoming form data for debugging
+        # Debugging logs
+        print("Form Data:", request.form)  
+        print("File Data:", request.files)  
 
-        user_id = request.form.get('responses[0][user_id]')
+        # Extract and validate responses
+        grouped_responses = {}
+        user_id = None
+
+        for key, value in request.form.items():
+            if key.startswith("responses["):
+                # Extract index and field name
+                index = key.split('[')[1].split(']')[0]
+                field = key.split('[')[2].split(']')[0]
+
+                # Initialize grouped responses for the index
+                if index not in grouped_responses:
+                    grouped_responses[index] = {}
+
+                # Assign the value to the appropriate field
+                grouped_responses[index][field] = value
+
+                # Capture and validate user_id
+                if field == "user_id":
+                    if user_id and user_id != value:
+                        return jsonify({"error": "All responses must belong to the same user"}), 400
+                    user_id = value
+
         if not user_id:
             return jsonify({"error": "User ID is required"}), 400
-        
-        # Gather responses
-        responses = request.form.to_dict(flat=False)
 
-        # Group responses by question_id
-        grouped_responses = {}
-        for key in responses.keys():
-            if key.endswith('[question_id]'):
-                q_index = key.split('[')[1].split(']')[0]
-                question_id = responses[key][0]
-                option_id = responses.get(f'responses[{q_index}][option_id]', [None])[0]
-                response_comment = responses.get(f'responses[{q_index}][response_comment]', [None])[0]
-                
-                grouped_responses[question_id] = {
-                    'option_id': option_id,
-                    'response_comment': response_comment,
-                    'q_index': q_index
-                }
+        # Process responses and handle file uploads
+        for index, response_data in grouped_responses.items():
+            question_id = response_data.get("question_id")
+            option_id = response_data.get("option_id")
+            response_comment = response_data.get("response_comment")
 
-        # Process and save responses
-        for question_id, response_data in grouped_responses.items():
-            # Check for any uploaded files
-            file = request.files.get(f'responses[{response_data["q_index"]}][response_file]', None)
+            # Validate required fields
+            if not question_id or not option_id:
+                return jsonify({"error": f"Missing required data for response {index}"}), 400
+
+            # Handle file uploads
+            file = request.files.get(f'responses[{index}][response_file]')
             response_file_name = None
-            if file and file.filename != '':
+            file_path = None
+
+            if file and file.filename:
                 if allowed_file(file.filename):
-                    filename = secure_filename(file.filename)
-                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                    response_file_name = secure_filename(file.filename)
+                    file_path = os.path.join(app.config['UPLOAD_FOLDER'], response_file_name)
                     file.save(file_path)
-                    print(f"File saved to: {file_path}")  # Debug log
+                    print(f"File saved: {file_path}")
 
-                    response_file_name = filename
-                    response_file_path = file_path  # Set the response file path here
-
-
-            # Check if a response for this question already exists
-            existing_response = Response.query.filter_by(question_id=question_id, user_id=user_id).first()
+            # Check if a response already exists
+            existing_response = Response.query.filter_by(
+                question_id=question_id, user_id=user_id
+            ).first()
 
             if existing_response:
                 # Update existing response
-                existing_response.option_id = response_data['option_id']
-                existing_response.response_comment = response_data['response_comment']
+                existing_response.option_id = option_id
+                existing_response.response_comment = response_comment
                 if response_file_name:
                     existing_response.response_file = response_file_name
-                    existing_response.response_file_path = file_path  # Update file path if it exists
-
+                    existing_response.response_file_path = file_path
             else:
-                # Create new response
+                # Create a new response
                 new_response = Response(
                     question_id=question_id,
-                    option_id=response_data['option_id'],
-                    response_comment=response_data['response_comment'],
+                    option_id=option_id,
+                    response_comment=response_comment,
                     response_file=response_file_name,
-                    response_file_path=file_path,  # Store the full file path if needed
+                    response_file_path=file_path,
                     user_id=user_id
                 )
                 db.session.add(new_response)
 
+        # Commit changes to the database
         db.session.commit()
         return jsonify({"message": "Assessment submitted successfully"}), 200
 
     except Exception as e:
+        # Rollback and log errors
         db.session.rollback()
         print("Error occurred:", str(e))
-        return jsonify({"error": str(e)}), 500
+        return jsonify({"error": "Internal server error"}), 500
 
 #ReviewAssessmentpage
 @app.route('/api/get_submitted_assessment_data/<string:assessment_name>/<int:user_id>', methods=['GET'])
@@ -490,6 +549,7 @@ def get_submitted_assessment_data(assessment_name, user_id):
 
 
 #reviewpage 
+#reviewpage   this my old code 
 @app.route('/api/assessments/project/<int:userid>', methods=['GET'])
 def get_assessments_by_project(userid):
     assessments = db.session.query(
@@ -507,9 +567,8 @@ def get_assessments_by_project(userid):
     } for assessment in assessments])
 
 
+
 #..
-
-
 
 @app.route('/api/responses/<int:user_id>', methods=['GET'])
 def get_user_responses(user_id):
@@ -554,10 +613,6 @@ def update_responses():
     return jsonify({'message': 'Responses updated successfully!'}), 200
 
 
-
-
-
-
 # API endpoint to handle reviewer comment submission
 @app.route('/api/submit_reviewer_comments', methods=['POST'])
 def submit_reviewer_comments():
@@ -597,7 +652,7 @@ def submit_reviewer_comments():
     except Exception as e:
         print(f"Error: {e}")  # Log the error for debugging
         return jsonify({'error': 'An error occurred while submitting comments'}), 500
-    
+#getting project to view the dashboard     
 @app.route('/projects/<int:user_id>', methods=['GET'])
 def get_user_projects(user_id):
     try:
@@ -614,6 +669,39 @@ def get_user_projects(user_id):
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+
+
+#reviewe comments getting to user
+@app.route('/api/get_reviewer_comments', methods=['GET'])
+def get_reviewer_comments():
+    user_id = request.args.get('user_id')
+    assessment_name = request.args.get('assessment_name')
+
+    if not user_id or not assessment_name:
+        return jsonify({'error': 'Missing parameters'}), 400
+
+    # Query reviewer comments for this assessment and user
+    comments = ReviewerComments.query.filter_by(
+        user_id=user_id, 
+        assessment_name=assessment_name
+    ).all()
+
+    if not comments:
+        return jsonify([])  # Return an empty array if no comments are found
+
+    # Organize data by question_id for easier access on the frontend
+    comments_by_question = []
+    for comment in comments:
+        comments_by_question.append({
+            'question_id': comment.question_id,
+            'reviewer_comment': comment.reviewer_comment
+        })
+
+    return jsonify(comments_by_question)
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -13,7 +13,11 @@ const ProjectTable = () => {
   useEffect(() => {
     const fetchProjects = async () => {
       try {
-        const token = sessionStorage.getItem('authToken');
+        const token = sessionStorage.getItem('token');
+        console.log("JWT Token: ", token);  // Log token to check
+
+        const roleId = sessionStorage.getItem('roleId'); // Get role from sessionStorage
+
         const response = await fetch('http://localhost:5000/projects', {
           headers: {
             'Authorization': `Bearer ${token}`,
@@ -25,7 +29,15 @@ const ProjectTable = () => {
         }
 
         const data = await response.json();
+        console.log(data); // Log the response body for debugging
+
+        if (roleId === 'submitter') {
+          const userId = sessionStorage.getItem('userId'); // Assuming userId is stored
+          const filteredProjects = data.filter(project => project.user_id === userId);
+          setProjects(filteredProjects);
+        } else {
         setProjects(data);
+        }
       } catch (error) {
         setError('Failed to fetch projects. Please try again later.');
         console.error(error);
@@ -161,4 +173,3 @@ const ProjectTable = () => {
 };
 
 export default ProjectTable;
-

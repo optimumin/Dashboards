@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react'; 
+import React, { useState, useEffect, useRef } from 'react';  
 import { Link, useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';  // Import SweetAlert2
-
+import Slider from "react-slick";
 import './Dashboard.css';
 import Sidebar from './Sidebar';
 
@@ -11,6 +11,7 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const userId = sessionStorage.getItem('userId');
+  const scrollContainerRef = useRef(null);
 
   useEffect(() => {
     const username = sessionStorage.getItem('username');
@@ -18,7 +19,6 @@ const Dashboard = () => {
       navigate('/login'); 
       return; 
     }
-    console.log(userId); // Check what the userId is before making the request
 
     if (!userId) {
       setError('User ID is missing. Please log in again.');
@@ -43,13 +43,13 @@ const Dashboard = () => {
       }
 
       const data = await response.json();
-      console.log('Fetched Projects:', data);  // Ensure data is fetched properly
       setProjects(data);  // Set the fetched projects
     } catch (error) {
       setError('Failed to fetch projects. Please try again later.');
       console.error(error);
     }
   };
+
   // Fetch assessments based on user project
   const fetchAssessmentsForProject = async (userId) => {
     try {
@@ -72,7 +72,6 @@ const Dashboard = () => {
     }
   };
 
- 
   const assessmentScores = [
     { id: 1, label: 'Physical Security', score: 85 },
     { id: 2, label: 'Environmental Controls', score: 60 },
@@ -88,6 +87,8 @@ const Dashboard = () => {
     if (score >= 50) return 'bg-warning';
     return 'bg-danger';
   };
+
+ 
 
   //logout
   const handleLogout = () => {
@@ -119,28 +120,43 @@ const Dashboard = () => {
       }
     });
   };
+
+  const handleScrollLeft = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: -300, behavior: 'smooth' });
+    }
+  };
+
+  const handleScrollRight = () => {
+    if (scrollContainerRef.current) {
+      scrollContainerRef.current.scrollBy({ left: 300, behavior: 'smooth' });
+    }
+  };
+
   return (
-     <div>
+    <div>
       <Sidebar />
       
-      <div className="container-fluid ">
+      <div className="container-fluid">
         {error && <div className="alert alert-danger">{error}</div>}
         <header className="header">
-                <h6 className="dashboard-title">Dashboard</h6>
-                <div class="top-icons">
-                    <button class="icon-button">
-                        <span class="material-icons">inbox</span>
-                    </button>
-                    <button className="icon-button" onClick={handleLogout}>
+          <h6 className="dashboard-title">Dashboard</h6>
+          <div className="top-icons">
+            <button className="icon-button">
+              <span className="material-icons">inbox</span>
+            </button>
+            <button className="icon-button" onClick={handleLogout}>
               <span className="material-icons">account_circle</span>
             </button>
-                </div>
-         </header>
-        <div className="projects">
-          {projects.map((project) => (
-            <div key={project.project_id} className="project-card">
-            <h3>{project.project_name}</h3>
-              <p>Progress: {project.progress}%</p>
+          </div>
+        </header>
+        <div className="projects-carousel-container">
+        <button className="scroll-button left" onClick={handleScrollLeft}>&#10094;</button>
+        <div className="projects-carousel" ref={scrollContainerRef}>
+            {projects.map((project) => (
+              <div key={project.project_id} className="project-card">
+                <h3>{project.project_name}</h3>
+                <p>Progress: {project.progress}%</p>
               <div className="progress-bars">
                 <div className="progres" style={{ width: `${project.progress}%` }}>
                   {project.progress}%
@@ -148,15 +164,21 @@ const Dashboard = () => {
               </div>
               <p>Assessments: {project.assessmentsCompleted}/{project.totalAssessments}</p>
             </div>
-          ))}
+            ))}
+
         </div>
+        <button className="scroll-button right" onClick={handleScrollRight}>&#10095; </button>
+
+        </div>
+       
+
 
         {/* Chosen Assessments Section */}
         <div className="chosen-assessments-container">
           <div className="col-md-10 offset-md-2">
             <div className="card">
               <div className="card-body">
-                <h5 className="card-titles ">Chosen Assessments</h5>
+                <h5 className="card-titles">Chosen Assessments</h5>
                 <div className="chosen-assessments-border">
                   <ul className="list-group">
                     {chosenAssessments.length > 0 ? (
@@ -175,6 +197,7 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+
         {/* Assessment Scores Section */}
         <div className="Assessment-score">
           <div className="col-md-10 offset-md-2">
@@ -183,16 +206,14 @@ const Dashboard = () => {
                 <h5 className="card-title">Assessment Scores</h5>
                 {assessmentScores.map(({ id, label, score }) => (
                   <div key={id} className="score d-flex align-items-left mb-3">
-                   
-                    <div className="progress w-90"> 
+                    <div className="progress w-90">
                       <div className={`progress-bar ${getProgressColor(score)}`} 
                            role="progressbar" 
-                           style={{ width: `${ score}%` }} 
+                           style={{ width: `${score}%` }} 
                            aria-valuenow={score} 
                            aria-valuemin="0" 
                            aria-valuemax="100">
-                           <span>{label} - {score}%</span>
-
+                        <span>{label} - {score}%</span>
                       </div>
                     </div>
                   </div>

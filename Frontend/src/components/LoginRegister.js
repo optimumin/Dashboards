@@ -10,6 +10,8 @@ const LoginRegister = () => {
   const [registering, setRegistering] = useState(false);
   const [registrationUsername, setRegistrationUsername] = useState('');
   const [registrationPassword, setRegistrationPassword] = useState('');
+  const [roles, setRoles] = useState([]); // State for roles
+  const [selectedRole, setSelectedRole] = useState(''); // State for selected role
   const [error, setError] = useState('');
 
   const navigate = useNavigate();
@@ -23,6 +25,20 @@ const LoginRegister = () => {
       setLoggedIn(true);
       setUsername(storedUsername || '');
     }
+  }, []);
+  useEffect(() => {
+    // Fetch roles from backend
+    const fetchRoles = async () => {
+      try {
+        const response = await fetch('http://127.0.0.1:5000/roles'); // Adjust endpoint as needed
+        const data = await response.json();
+        setRoles(data.roles); // Assume backend sends roles as { roles: [{ role_id, role_name }, ...] }
+      } catch (error) {
+        console.error('Failed to fetch roles:', error);
+      }
+    };
+
+    fetchRoles();
   }, []);
 
   const validatePassword = (password) => {
@@ -52,6 +68,11 @@ const LoginRegister = () => {
           sessionStorage.setItem('token', data.access_token);
           sessionStorage.setItem('userId', data.id); // Store the user ID
           sessionStorage.setItem('username', username);
+          if (data.role_id !== undefined) {
+            sessionStorage.setItem('roleId', data.role_id);
+          } else {
+            console.error('Role ID is missing in the response');
+          }
           setLoggedIn(true);
           setError('');
           alert('Login successful!');
@@ -79,19 +100,25 @@ const LoginRegister = () => {
       return;
     }
 
+    if (!selectedRole) {
+      setError('Please select a role.');
+      return;
+    }
+
     try {
-      if (registrationUsername && registrationPassword) {
+      if (registrationUsername && registrationPassword && selectedRole) {
         const response = await fetch('http://127.0.0.1:5000/register', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ username: registrationUsername, password: registrationPassword }),
+          body: JSON.stringify({ username: registrationUsername, password: registrationPassword,role_id: selectedRole }),
         });
 
         if (response.ok) {
           setRegistrationUsername('');
           setRegistrationPassword('');
+          setSelectedRole('');
           setError('');
           setRegistering(false);
           alert('Registration successful!');
@@ -146,6 +173,7 @@ const LoginRegister = () => {
                       required
                     />
                   </div>
+                  
                   {error && <div className="alert alert-danger" role="alert">{error}</div>}
                   <button type="submit" className="btn btn-dark w-100">Login</button>
                   <SignInWithGoogle/>
@@ -185,6 +213,23 @@ const LoginRegister = () => {
                       required
                     />
                   </div>
+                    <div className="mb-3">
+                  <label htmlFor="roleSelect" className="form-label">Select Role</label>
+                  <select
+                    className="form-select"
+                    id="roleSelect"
+                    value={selectedRole}
+                    onChange={(e) => setSelectedRole(e.target.value)}
+                    required
+                  >
+                    <option value="" disabled>Select a role</option>
+                    {roles.map((role) => (
+                      <option key={role.role_id} value={role.role_id}>
+                        {role.role_name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
                   {error && <div className="alert alert-danger" role="alert">{error}</div>}
                   <button type="submit" className="btn btn-dark w-100">Register</button>
                   <div className="text-center my-3">or</div>

@@ -95,28 +95,33 @@ html, body {
 }
 
 /* Scrollable Project Container */
+/* Container for Projects */
 .projects {
   display: flex;
-  flex-wrap: wrap; /* Allow cards to wrap into multiple rows */
-  justify-content: flex-start; /* Align cards to the start */
+  gap: 10px;
+  padding: 10px;
   margin-left: 17.7%;
-  padding-right: 15px;
-  height: 200px; /* Set a fixed height for the container */
-  overflow-y: auto; /* Show vertical scrollbar only when necessary */
-  border: 0px solid #ffffff; /* Optional: Add a border for better visibility */
+  margin-right: 15px;
+  width: 100%; /* Set a fixed width or adjust as needed */
+  max-height: 200px; /* Limits the height */
+  overflow-x: auto; /* Enables horizontal scrolling */
+  overflow-y: hidden; /* Prevents vertical scrolling */
+  border: 1px solid #ddd;
   border-radius: 5px;
-  gap:20px /* Optional: Add border radius for rounded corners */
 }
 
 /* Project Card Styling */
 .project-card {
   background-color: #ffffff;
-  border-radius: 2px; /* Softer rounded corners */
+  border-radius: 2px;
   padding: 20px;
-  width: 32%; /* Responsive width */
-  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); /* Increased shadow for a modern look */
+  width: 200px; /* Adjust as necessary */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  flex: 0 0 auto; /* Ensures the cards do not shrink or grow */
   transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+
 }
+
 
 .project-card:hover {
   transform: translateY(-5px);
@@ -246,4 +251,75 @@ p {
     margin-left: 0;
     text-align: center;
   }
+}
+
+.projects-carousel {
+  margin-left: 17.7%;
+  margin-right: 15px;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.project-card {
+  background-color: #ffffff;
+  border-radius: 5px;
+  padding: 20px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
+}
+
+.project-card:hover {
+  transform: scale(1.05);
+}
+
+
+
+.projects-carousel-container {
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.projects-carousel {
+  display: flex;
+  overflow-x: hidden;
+  width:80%;
+  scroll-behavior: smooth;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+
+
+.scroll-button {
+  position: absolute;
+  top:50%;
+  transform: translateY(-50%);
+  background-color: #1663f1;
+  color: white;
+  border: none;
+  border-radius: 50px;
+  padding: 5.5rem 0.5rem;
+  cursor: pointer;
+  z-index: 1;
+  overflow-y: auto; /* Enable vertical scroll */
+}
+
+.projects-carousel-container {
+  position: relative;
+  overflow: hidden; /* Ensures scrollable content is contained */
+}
+.scroll-button.left {
+  left: 17%;
+
+
+}
+
+.scroll-button.right {
+  right: 1%;
+}
+
+.scroll-button:hover {
+  background-color: #1663f1;
 }

@@ -106,7 +106,10 @@ const AssessmentPage = () => {
       });
     });
     
-
+  // Log the formData to check the payload
+  for (let pair of formData.entries()) {
+    console.log(pair[0] + ': ' + pair[1]);
+  }
     try {
       const response = await fetch('http://localhost:5000/api/responses', {
         method: 'POST',

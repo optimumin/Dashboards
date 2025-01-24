@@ -3,79 +3,79 @@
 /* Header.css */
 
 .table-responsive {
-    margin-top: 20px;
-  }
-  
-  .card-bodys {
-    background-color: transparent; /* Use transparent instead of none */
-    width:58%;
-    border-radius: 8px;
-    padding: 20px;
-    margin-left: 20.5%;
-    margin-right: 20px;
-  }
-  
-  .table {
-    width: 100%;
-    border-collapse: collapse;
-    background: none;
-  }
-  
-  .table thead th {
-    background-color: #f8f9fa;
-    color: #333;
-    font-weight: bold;
-    border-bottom: 2px solid #dee2e6;
-  }
-  
-  .table tbody tr {
-    transition: background-color 0.3s;
-  }
-  
-  .table tbody tr:hover {
-    background-color: #f1f1f1;
-  }
-  
-  .table td {
-    padding: 0.75rem;
-    vertical-align: top;
-    border-top: 1px solid #dee2e6;
-  }
-  
-  .table a {
-    color: #007bff;
-    text-decoration: none;
-  }
-  
-  .table a:hover {
-    text-decoration: underline;
-  }
-  
-  .alert {
-    margin-top: 1rem;
-    font-size: 16px;
-  }
-  
-  .btn-primary {
-    margin-top: 20px;
-  }
-  
-  /* Button styles */
-.btn-primary {
-  background-color: #075ddf;
-  border-color: #1c67d6;
-  color: white;
-  font-size: 16px;
-  padding: 8px 12px;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  margin-top: 20px;
+}
+
+.card-bodys {
+  background-color: transparent; /* Use transparent instead of none */
+  width:58%;
+  border-radius: 8px;
+  padding: 20px;
+  margin-left: 20.5%;
   margin-right: 20px;
-  text-align: center;
-  margin-top: 1px;;
-  margin-bottom: 1px;;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  background: none;
+}
+
+.table thead th {
+  background-color: #f8f9fa;
+  color: #333;
+  font-weight: bold;
+  border-bottom: 2px solid #dee2e6;
+}
+
+.table tbody tr {
+  transition: background-color 0.3s;
+}
+
+.table tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+}
+
+.table a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.table a:hover {
+  text-decoration: underline;
+}
+
+.alert {
+  margin-top: 1rem;
+  font-size: 16px;
+}
+
+.btn-primary {
+  margin-top: 20px;
+}
+
+/* Button styles */
+.btn-primary {
+background-color: #075ddf;
+border-color: #1c67d6;
+color: white;
+font-size: 16px;
+padding: 8px 12px;
+border-radius: 4px;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+margin-right: 20px;
+text-align: center;
+margin-top: 1px;;
+margin-bottom: 1px;;
 }
 
 .btn-primary:hover {
-  background-color: #004085;
-  border-color: #003366;
+background-color: #004085;
+border-color: #003366;
 }

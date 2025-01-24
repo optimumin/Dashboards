@@ -10,6 +10,7 @@ import ReviewAssessmentPage from './components/ReviewAssessmentpage';
 import EditAssessmentPage from './components/EditAssessmentPage';
 import { ToastContainer } from 'react-toastify';  // Import ToastContainer
 import 'bootstrap/dist/css/bootstrap.min.css';
+import ReviewComments from './components/ReviewComments';
 
 const App = () => {
   return (
@@ -24,6 +25,8 @@ const App = () => {
           <Route path="/reviewPage/project/:userId" element={<ReviewPage/>} />
           <Route path="/review-assessment/:assessment_name" element={<ReviewAssessmentPage/>} />
           <Route path="/edit-assessment/:assessment_name" element={<EditAssessmentPage />} />
+          <Route path="/reviewer-comments/:assessment_name" element={<ReviewComments />} />
+
 
         </Routes>
         <ToastContainer />  {/* Add ToastContainer to your app */}
